@@ -1,25 +1,22 @@
 #define STB_IMAGE_WRITE_IMPLEMENTATION
 #include "img_handler.hpp"
+#include "iostream"
+#include "strahl.hpp"
 
 using namespace std;
 
-#define HEIGHT 300
-#define WIDTH 300
+#define HEIGHT 1440
+#define WIDTH 2560
 #define CHANNEL_NUM 3
 
 int main() {
-    RenderedImg img(WIDTH, HEIGHT, MODE_RGB);
-    RGBA fillcolor(0, 0, 0);
-    img.FillColor(fillcolor);
-    vector2d sPoint(0, 0);
-    vector2d ePoint(30, 99);
-    // img.DrawLine(sPoint, ePoint, RGBA(0, 255, 255));
-    img.DrawLine(sPoint, ePoint, RGBA(255, 255, 255));
+    MeshModel monkey("monkey.obj");
 
-    RGBA pixelcolor(255, 255, 255);
-    img.DrawPixel(sPoint, pixelcolor);
-    img.DrawPixel(ePoint, pixelcolor);
+    RenderedImg img(WIDTH, HEIGHT, MODE_RGBA);
+    img.FillColor(RGBA(GREEN, 128));
 
+    Scene scene1;
+    scene1.DrawModel(img, monkey, WIREFRAME, RGBA(BLACK));
     img.SaveImg("result.png");
 
     return 0;
