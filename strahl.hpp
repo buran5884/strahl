@@ -5,10 +5,39 @@
 
 using namespace std;
 
+struct RGBA {
+    int r;
+    int g;
+    int b;
+    int a;
+    RGBA(int _r, int _g, int _b) {
+        r = _r;
+        g = _g;
+        b = _b;
+    }
+    RGBA(int _r, int _g, int _b, int _a) {
+        r = _r;
+        g = _g;
+        b = _b;
+        a = _a;
+    }
+};
+
 struct vector3d {
     double x;
     double y;
     double z;
+};
+
+struct vector2d{
+    double u;
+    double v;
+
+    vector2d(){}
+    vector2d(int _u,int _v){
+        u = _u;
+        v = _v;
+    }
 };
 
 class CameraPers {
