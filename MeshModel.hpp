@@ -1,21 +1,25 @@
 #pragma once
 
 #include "utilities.hpp"
+#include <cmath>
 #include <iostream>
 #include <vector>
 
 using namespace std;
 
 class MeshModel {
+    vector<vector3d> vertices_origin;
     vector<vector3d> vertices;
     vector<vector3d> normals;
     vector<vector2d> textures;
     vector<int> faces;
 
     int loadOBJ(string filename);
+    void setVertex(size_t index, vector3d location);
 
 public:
     vector3d vertex(size_t index);
+    vector3d vertex_origin(size_t index);
     vector3d normal(size_t index);
 
     vector3d faceVertex(size_t index, int elem);
@@ -24,12 +28,66 @@ public:
     size_t vertexSize(void);
     size_t faceSize(void);
 
+    void translation(vector3d location);
+    void rotation(int axis, double angle);
+
     MeshModel(string filename) {
         loadOBJ(filename);
     }
 };
 
+void MeshModel::translation(vector3d location) {
+    for (int i = 0; i < vertexSize(); i++) {
+        double x = vertex(i).x + location.x;
+        double y = vertex(i).y + location.y;
+        double z = vertex(i).z + location.z;
+        setVertex(i, vector3d(x, y, z));
+    }
+}
+
+void MeshModel::rotation(int axis, double angle) {
+    cout << angle << endl;
+    double theta = angle * M_PI / 180.0;
+    for (int i = 0; i < vertexSize(); i++) {
+        double x = vertex_origin(i).x;
+        double y = vertex_origin(i).y;
+        double z = vertex_origin(i).z;
+        double _x, _y, _z;
+        switch (axis) {
+        case X_AXIS:
+            x = x;
+            y = y * cos(theta) - z * sin(theta);
+            z = y * sin(theta) + z * cos(theta);
+            break;
+
+        case Y_AXIS:
+            x = x * cos(theta) + z * sin(theta);
+            y = y;
+            z = -x * sin(theta) + z * cos(theta);
+            break;
+
+        case Z_AXIS:
+            x = x * cos(theta) - y * sin(theta);
+            y = x * sin(theta) + y * cos(theta);
+            z = z;
+            break;
+
+        default:
+            break;
+        }
+        setVertex(i, vector3d(x, y, z));
+    }
+}
+
+void MeshModel::setVertex(size_t index, vector3d location) {
+    vertices[index] = location;
+}
+
 vector3d MeshModel::vertex(size_t index) {
+    return vertices[index];
+}
+
+vector3d MeshModel::vertex_origin(size_t index) {
     return vertices[index];
 }
 
@@ -113,6 +171,7 @@ int MeshModel::loadOBJ(string filename) {
             break;
         }
     }
+    copy(vertices.begin(), vertices.end(), back_inserter(vertices_origin));
 
     return 0;
 }
