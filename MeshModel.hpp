@@ -45,31 +45,27 @@ void MeshModel::translation(vector3d location) {
     }
 }
 
-void MeshModel::rotation(int axis, double angle) {
-    cout << angle << endl;
-    double theta = angle * M_PI / 180.0;
+void MeshModel::rotation(int axis, double degree) {
+    double theta = degree * M_PI / 180.0;
+    double x, y, z;
     for (int i = 0; i < vertexSize(); i++) {
-        double x = vertex_origin(i).x;
-        double y = vertex_origin(i).y;
-        double z = vertex_origin(i).z;
-        double _x, _y, _z;
         switch (axis) {
         case X_AXIS:
-            x = x;
-            y = y * cos(theta) - z * sin(theta);
-            z = y * sin(theta) + z * cos(theta);
+            x = vertex_origin(i).x;
+            y = vertex_origin(i).y * cos(theta) - vertex_origin(i).z * sin(theta);
+            z = vertex_origin(i).y * sin(theta) + vertex_origin(i).z * cos(theta);
             break;
 
         case Y_AXIS:
-            x = x * cos(theta) + z * sin(theta);
-            y = y;
-            z = -x * sin(theta) + z * cos(theta);
+            x = vertex_origin(i).x * cos(theta) + vertex_origin(i).z * sin(theta);
+            y = vertex_origin(i).y;
+            z = -vertex_origin(i).x * sin(theta) + vertex_origin(i).z * cos(theta);
             break;
 
         case Z_AXIS:
-            x = x * cos(theta) - y * sin(theta);
-            y = x * sin(theta) + y * cos(theta);
-            z = z;
+            x = vertex_origin(i).x * cos(theta) - vertex_origin(i).y * sin(theta);
+            y = vertex_origin(i).x * sin(theta) + vertex_origin(i).y * cos(theta);
+            z = vertex_origin(i).z;
             break;
 
         default:
@@ -77,6 +73,7 @@ void MeshModel::rotation(int axis, double angle) {
         }
         setVertex(i, vector3d(x, y, z));
     }
+    x = 0.0, y = 0.0, z = 0.0;
 }
 
 void MeshModel::setVertex(size_t index, vector3d location) {
@@ -88,7 +85,7 @@ vector3d MeshModel::vertex(size_t index) {
 }
 
 vector3d MeshModel::vertex_origin(size_t index) {
-    return vertices[index];
+    return vertices_origin[index];
 }
 
 vector3d MeshModel::normal(size_t index) {

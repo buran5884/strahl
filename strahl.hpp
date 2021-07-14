@@ -57,10 +57,10 @@ void Scene::DrawModel(RenderedImg& img, MeshModel& model, int mode, RGBA rgba) {
     vector2d scale(img.GetWidth() / 6.4, img.GetHeight() / 3.6);
     for (int i = 0; i < model.faceSize(); i++) {
         vector3d vertices[3];
-        UV screenPoints[3];
+        vector2i screenPoints[3];
         for (int j = 0; j < 3; j++) {
             vertices[j] = model.faceVertex(i, j);
-            screenPoints[j] = UV(scale.x * (vertices[j].x + 3.2), scale.y * (-vertices[j].y + 1.8));
+            screenPoints[j] = vector2i(scale.x * (vertices[j].x + 3.2), scale.y * (-vertices[j].y + 1.8));
         }
         img.DrawLine(screenPoints[0], screenPoints[1], rgba);
         img.DrawLine(screenPoints[1], screenPoints[2], rgba);

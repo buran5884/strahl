@@ -97,12 +97,12 @@ struct vector2d {
     }
 };
 
-struct UV {
+struct vector2i {
     int u;
     int v;
 
-    UV() { }
-    UV(int _u, int _v) {
+    vector2i() { }
+    vector2i(int _u, int _v) {
         u = _u;
         v = _v;
     }

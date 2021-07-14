@@ -27,10 +27,10 @@ public:
         mode = _mode;
         pixels = new uint8_t[width * height * mode];
     }
-    void DrawPixel(UV point, RGBA rgba);
+    void DrawPixel(vector2i point, RGBA rgba);
     void SaveImg(string filename);
     void FillColor(RGBA rgba);
-    void DrawLine(UV point1, UV point2, RGBA rgba);
+    void DrawLine(vector2i point1, vector2i point2, RGBA rgba);
     void DrawWireframe(MeshModel model, RGBA rgba);
     int GetWidth();
     int GetHeight();
@@ -44,7 +44,7 @@ int RenderedImg::GetHeight() {
     return height;
 }
 
-void RenderedImg::DrawPixel(UV point, RGBA rgba) {
+void RenderedImg::DrawPixel(vector2i point, RGBA rgba) {
     int cols = point.u;
     int rows = point.v;
     pixels[((cols + rows * width) * mode) + 0] = rgba.r;
@@ -68,7 +68,7 @@ void RenderedImg::FillColor(RGBA rgba) {
     }
 }
 
-void RenderedImg::DrawLine(UV point1, UV point2, RGBA rgba) {
+void RenderedImg::DrawLine(vector2i point1, vector2i point2, RGBA rgba) {
     int frac;
     int uNext, vNext, uStep, vStep, uDelta, vDelta;
     int uself, vself, uEnd, vEnd;
@@ -92,7 +92,7 @@ void RenderedImg::DrawLine(UV point1, UV point2, RGBA rgba) {
         uDelta = -uDelta;
     if (vDelta < 0)
         vDelta = -vDelta;
-    DrawPixel(UV(uNext, vNext), rgba);
+    DrawPixel(vector2i(uNext, vNext), rgba);
     if (uDelta > vDelta) {
         frac = vDelta * 2 - uDelta;
         while (uNext != uEnd) {
@@ -102,7 +102,7 @@ void RenderedImg::DrawLine(UV point1, UV point2, RGBA rgba) {
             }
             uNext = uNext + uStep;
             frac = frac + vDelta;
-            DrawPixel(UV(uNext, vNext), rgba);
+            DrawPixel(vector2i(uNext, vNext), rgba);
         }
     } else {
         frac = uDelta * 2 - vDelta;
@@ -113,7 +113,7 @@ void RenderedImg::DrawLine(UV point1, UV point2, RGBA rgba) {
             }
             vNext = vNext + vStep;
             frac = frac + uDelta;
-            DrawPixel(UV(uNext, vNext), rgba);
+            DrawPixel(vector2i(uNext, vNext), rgba);
         }
     }
 }
