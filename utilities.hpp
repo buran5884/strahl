@@ -15,6 +15,7 @@ struct RGBA {
     int g;
     int b;
     int a;
+    RGBA() { }
     RGBA(int _r, int _g, int _b) {
         r = _r;
         g = _g;
@@ -83,6 +84,21 @@ struct vector3d {
         x = _x;
         y = _y;
         z = _z;
+    }
+};
+
+struct vector4d {
+    double x;
+    double y;
+    double z;
+    double w;
+
+    vector4d() { }
+    vector4d(double _x, double _y, double _z, double _w) {
+        x = _x;
+        y = _y;
+        z = _z;
+        w = _w;
     }
 };
 

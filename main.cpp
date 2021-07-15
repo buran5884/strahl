@@ -5,17 +5,20 @@
 
 using namespace std;
 
-#define HEIGHT 1440
-#define WIDTH 2560
+#define HEIGHT 720
+#define WIDTH 1280
 #define CHANNEL_NUM 3
 
 int main() {
     Object3D monkey("monkey.obj");
-    RenderedImg img(WIDTH, HEIGHT, MODE_RGBA);
+    monkey.SetRotation(vector3d(0, 45, 0));
+    monkey.SetPosition(vector3d(0.0, 0.0, -4.0));
+    RenderedImg img(WIDTH, HEIGHT, MODE_RGB);
     Scene scene;
+    CameraOrtho camera;
 
     img.FillColor(RGBA(WHITE));
-    scene.DrawModel(img, monkey, WIREFRAME, RGBA(BLACK));
+    scene.DrawModelPers(img, monkey, WIREFRAME, RGBA(BLACK));
     img.SaveImg("result.png");
 
     return 0;

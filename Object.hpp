@@ -7,6 +7,12 @@
 
 using namespace std;
 
+class Object {
+    vector<vector3d> location;
+    vector<vector3d> rotation;
+    vector<vector3d> scale;
+};
+
 class Object3D {
     vector<vector3d> originalVertex;
     vector<vector3d> vertices;
@@ -28,52 +34,60 @@ public:
     size_t GetVertexSize(void);
     size_t GetFaceSize(void);
 
-    void Translation(vector3d location);
-    void Rotation(int axis, double angle);
+    void SetPosition(vector3d position);
+    void SetRotation(vector3d angle);
+    void SetScale(vector3d scale);
 
     Object3D(string filename) {
         LoadOBJ(filename);
     }
 };
 
-void Object3D::Translation(vector3d location) {
+void Object3D::SetPosition(vector3d position) {
     for (int i = 0; i < GetVertexSize(); i++) {
-        double x = GetVertex(i).x + location.x;
-        double y = GetVertex(i).y + location.y;
-        double z = GetVertex(i).z + location.z;
+        double x = GetVertex(i).x + position.x;
+        double y = GetVertex(i).y + position.y;
+        double z = GetVertex(i).z + position.z;
         SetVertex(i, vector3d(x, y, z));
     }
 }
 
-void Object3D::Rotation(int axis, double degree) {
-    double theta = degree * M_PI / 180.0;
+void Object3D::SetRotation(vector3d angle) {
+    double a = angle.x * M_PI / 180.0;
+    double b = angle.y * M_PI / 180.0;
+    double c = angle.z * M_PI / 180.0;
+
+    double x0, y0, z0;
     double x, y, z;
+    double rotMatrix[9];
+    rotMatrix[0] = cos(c) * cos(b);
+    rotMatrix[1] = cos(c) * sin(b) * sin(a) - sin(c) * cos(a);
+    rotMatrix[2] = cos(c) * sin(b) * cos(a) + sin(c) * sin(a);
+    rotMatrix[3] = sin(c) * cos(b);
+    rotMatrix[4] = sin(c) * sin(b) * sin(a) + cos(c) * cos(a);
+    rotMatrix[5] = sin(c) * sin(b) * cos(a) - cos(c) * sin(a);
+    rotMatrix[6] = -sin(b);
+    rotMatrix[7] = cos(b) * sin(a);
+    rotMatrix[8] = cos(b) * cos(a);
+
     for (int i = 0; i < GetVertexSize(); i++) {
-        switch (axis) {
-        case X_AXIS:
-            x = GetOriginalVertex(i).x;
-            y = GetOriginalVertex(i).y * cos(theta) - GetOriginalVertex(i).z * sin(theta);
-            z = GetOriginalVertex(i).y * sin(theta) + GetOriginalVertex(i).z * cos(theta);
-            break;
-
-        case Y_AXIS:
-            x = GetOriginalVertex(i).x * cos(theta) + GetOriginalVertex(i).z * sin(theta);
-            y = GetOriginalVertex(i).y;
-            z = -GetOriginalVertex(i).x * sin(theta) + GetOriginalVertex(i).z * cos(theta);
-            break;
-
-        case Z_AXIS:
-            x = GetOriginalVertex(i).x * cos(theta) - GetOriginalVertex(i).y * sin(theta);
-            y = GetOriginalVertex(i).x * sin(theta) + GetOriginalVertex(i).y * cos(theta);
-            z = GetOriginalVertex(i).z;
-            break;
-
-        default:
-            break;
-        }
+        x0 = GetOriginalVertex(i).x;
+        y0 = GetOriginalVertex(i).y;
+        z0 = GetOriginalVertex(i).z;
+        x = x0 * rotMatrix[0] + y0 * rotMatrix[1] + z0 * rotMatrix[2];
+        y = x0 * rotMatrix[3] + y0 * rotMatrix[4] + z0 * rotMatrix[5];
+        z = x0 * rotMatrix[6] + y0 * rotMatrix[7] + z0 * rotMatrix[8];
         SetVertex(i, vector3d(x, y, z));
     }
-    x = 0.0, y = 0.0, z = 0.0;
+}
+
+void Object3D::SetScale(vector3d scale) {
+    for (int i = 0; i < GetVertexSize(); i++) {
+        double x = GetVertex(i).x * scale.x;
+        double y = GetVertex(i).y * scale.y;
+        double z = GetVertex(i).z * scale.z;
+        SetVertex(i, vector3d(x, y, z));
+    }
 }
 
 void Object3D::SetVertex(size_t index, vector3d location) {
@@ -120,7 +134,6 @@ int Object3D::LoadOBJ(string filename) {
 
     int mtl_number = -1;
     char line[128], mtl[56];
-    puts("hoge");
 
     while (fgets(line, sizeof(line), fp) != NULL) {
         switch (line[0]) {

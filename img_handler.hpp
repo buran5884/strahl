@@ -27,6 +27,7 @@ public:
         mode = _mode;
         pixels = new uint8_t[width * height * mode];
     }
+
     void DrawPixel(vector2i point, RGBA rgba);
     void SaveImg(string filename);
     void FillColor(RGBA rgba);
@@ -47,11 +48,13 @@ int RenderedImg::GetHeight() {
 void RenderedImg::DrawPixel(vector2i point, RGBA rgba) {
     int cols = point.u;
     int rows = point.v;
-    pixels[((cols + rows * width) * mode) + 0] = rgba.r;
-    pixels[((cols + rows * width) * mode) + 1] = rgba.g;
-    pixels[((cols + rows * width) * mode) + 2] = rgba.b;
-    if (mode == MODE_RGBA)
-        pixels[((cols + rows * width) * mode) + 3] = rgba.a;
+    if (0 <= cols && cols < width && 0 <= rows && rows < height) {
+        pixels[((cols + rows * width) * mode) + 0] = rgba.r;
+        pixels[((cols + rows * width) * mode) + 1] = rgba.g;
+        pixels[((cols + rows * width) * mode) + 2] = rgba.b;
+        if (mode == MODE_RGBA)
+            pixels[((cols + rows * width) * mode) + 3] = rgba.a;
+    }
 }
 
 void RenderedImg::SaveImg(string filename) {
