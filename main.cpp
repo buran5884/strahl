@@ -18,19 +18,9 @@ int main() {
     RenderedImg img(WIDTH, HEIGHT, MODE_RGBA);
     Scene scene1;
 
-    for (int i = 0; i <= 90; i += 10) {
-        img.FillColor(RGBA(GREEN));
-        monkey.rotation(Z_AXIS, i);
-        scene1.DrawModel(img, monkey, WIREFRAME, RGBA(BLACK));
-        img.SaveImg("result.png");
-    }
-
-    for (int i = 0; i <= 90; i += 10) {
-        img.FillColor(RGBA(GREEN));
-        monkey.rotation(Y_AXIS, i);
-        scene1.DrawModel(img, monkey, WIREFRAME, RGBA(BLACK));
-        img.SaveImg("result.png");
-    }
+    img.FillColor(RGBA(WHITE));
+    scene1.DrawModel(img, monkey, WIREFRAME, RGBA(BLACK));
+    img.SaveImg("result.png");
 
     return 0;
 }
