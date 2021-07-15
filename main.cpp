@@ -9,12 +9,8 @@ using namespace std;
 #define WIDTH 2560
 #define CHANNEL_NUM 3
 
-int rotate(MeshModel& model) {
-    return 0;
-}
-
 int main() {
-    MeshModel monkey("monkey.obj");
+    Object3D monkey("monkey.obj");
     RenderedImg img(WIDTH, HEIGHT, MODE_RGBA);
     Scene scene;
 

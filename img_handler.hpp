@@ -4,7 +4,7 @@
 #include <string>
 #include <vector>
 
-#include "MeshModel.hpp"
+#include "Object.hpp"
 #include "stb_image_write.h"
 #include "utilities.hpp"
 
@@ -31,7 +31,7 @@ public:
     void SaveImg(string filename);
     void FillColor(RGBA rgba);
     void DrawLine(vector2i point1, vector2i point2, RGBA rgba);
-    void DrawWireframe(MeshModel model, RGBA rgba);
+    void DrawWireframe(Object3D model, RGBA rgba);
     int GetWidth();
     int GetHeight();
 };
