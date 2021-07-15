@@ -16,10 +16,10 @@ int rotate(MeshModel& model) {
 int main() {
     MeshModel monkey("monkey.obj");
     RenderedImg img(WIDTH, HEIGHT, MODE_RGBA);
-    Scene scene1;
+    Scene scene;
 
     img.FillColor(RGBA(WHITE));
-    scene1.DrawModel(img, monkey, WIREFRAME, RGBA(BLACK));
+    scene.DrawModel(img, monkey, WIREFRAME, RGBA(BLACK));
     img.SaveImg("result.png");
 
     return 0;
