@@ -20,6 +20,8 @@ class Object3D {
     vector<vector2d> textures;
     vector<int> faces;
 
+    vector<edge> edges;
+
     int LoadOBJ(string filename);
     void SetVertex(size_t index, vector3d location);
 
