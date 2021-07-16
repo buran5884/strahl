@@ -6,7 +6,7 @@
 
 #include "Object.hpp"
 #include "stb_image_write.h"
-#include "utilities.hpp"
+#include "Utilities.hpp"
 
 #define MODE_RGB 3
 #define MODE_RGBA 4

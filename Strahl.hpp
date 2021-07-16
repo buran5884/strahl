@@ -2,7 +2,7 @@
 
 #include "Object.hpp"
 #include "img_handler.hpp"
-#include "utilities.hpp"
+#include "Utilities.hpp"
 #include <vector>
 
 #define CAMERA_PERS 0
@@ -20,9 +20,6 @@ class CameraPers;
 
 class Scene {
 private:
-    vector<CameraPers> camerapersList;
-    vector<CameraOrtho> cameraorthoList;
-    vector<Object3D> meshmodelList;
     RGBA backgroundColor;
     vector<Object3D> objects;
 

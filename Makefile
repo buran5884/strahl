@@ -1,2 +1,2 @@
 main:
-	g++ -o strahl main.cpp
+	g++ -o render_test main.cpp

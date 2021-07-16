@@ -1,7 +1,7 @@
 #define STB_IMAGE_WRITE_IMPLEMENTATION
 #include "img_handler.hpp"
 #include "iostream"
-#include "strahl.hpp"
+#include "Strahl.hpp"
 #include <chrono>
 
 using namespace std;
