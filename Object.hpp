@@ -7,13 +7,13 @@
 
 using namespace std;
 
-class Object {
-    vector<vector3d> location;
-    vector<vector3d> rotation;
-    vector<vector3d> scale;
-};
-
 class Object3D {
+    int id;
+
+    vector3d position;
+    vector3d rotation;
+    vector3d scale;
+
     vector<vector3d> originalVertex;
     vector<vector3d> vertices;
     vector<vector3d> normals;
@@ -21,9 +21,15 @@ class Object3D {
     vector<int> faces;
 
     int LoadOBJ(string filename);
-    void SetVertex(size_t index, vector3d location);
+    void SetVertex(size_t index, vector3d position);
 
 public:
+    Object3D(string filename) {
+        id = -1;
+        LoadOBJ(filename);
+    }
+
+    int GetID();
     vector3d GetVertex(size_t index);
     vector3d GetOriginalVertex(size_t index);
     vector3d GetNormal(size_t index);
@@ -34,16 +40,22 @@ public:
     size_t GetVertexSize(void);
     size_t GetFaceSize(void);
 
-    void SetPosition(vector3d position);
-    void SetRotation(vector3d angle);
-    void SetScale(vector3d scale);
-
-    Object3D(string filename) {
-        LoadOBJ(filename);
-    }
+    void SetID(int _id);
+    void SetPosition(vector3d _position);
+    void SetRotation(vector3d _rotation);
+    void SetScale(vector3d _scale);
 };
 
-void Object3D::SetPosition(vector3d position) {
+int Object3D::GetID() {
+    return id;
+}
+
+void Object3D::SetID(int _id){
+    id = _id;
+}
+
+void Object3D::SetPosition(vector3d _position) {
+    position = _position;
     for (int i = 0; i < GetVertexSize(); i++) {
         double x = GetVertex(i).x + position.x;
         double y = GetVertex(i).y + position.y;
@@ -52,10 +64,11 @@ void Object3D::SetPosition(vector3d position) {
     }
 }
 
-void Object3D::SetRotation(vector3d angle) {
-    double a = angle.x * M_PI / 180.0;
-    double b = angle.y * M_PI / 180.0;
-    double c = angle.z * M_PI / 180.0;
+void Object3D::SetRotation(vector3d _rotation) {
+    rotation = _rotation;
+    double a = rotation.x * M_PI / 180.0;
+    double b = rotation.y * M_PI / 180.0;
+    double c = rotation.z * M_PI / 180.0;
 
     double x0, y0, z0;
     double x, y, z;
@@ -81,7 +94,8 @@ void Object3D::SetRotation(vector3d angle) {
     }
 }
 
-void Object3D::SetScale(vector3d scale) {
+void Object3D::SetScale(vector3d _scale) {
+    scale = _scale;
     for (int i = 0; i < GetVertexSize(); i++) {
         double x = GetVertex(i).x * scale.x;
         double y = GetVertex(i).y * scale.y;

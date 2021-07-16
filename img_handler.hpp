@@ -13,7 +13,7 @@
 
 using namespace std;
 
-class RenderedImg {
+class Image {
 private:
     uint8_t* pixels;
     int width;
@@ -21,15 +21,17 @@ private:
     int mode;
 
 public:
-    RenderedImg(int _width, int _height, int _mode) {
+    Image(int _width, int _height, int _mode) {
         width = _width;
         height = _height;
         mode = _mode;
         pixels = new uint8_t[width * height * mode];
     }
 
+    void SetResolution(int _width, int _height);
     void DrawPixel(vector2i point, RGBA rgba);
-    void SaveImg(string filename);
+    void SavePngImg(string filename);
+    void SavePpmImg(string filename);
     void FillColor(RGBA rgba);
     void DrawLine(vector2i point1, vector2i point2, RGBA rgba);
     void DrawWireframe(Object3D model, RGBA rgba);
@@ -37,15 +39,20 @@ public:
     int GetHeight();
 };
 
-int RenderedImg::GetWidth() {
+void Image::SetResolution(int _width, int _height) {
+    width = _width;
+    height = _height;
+}
+
+int Image::GetWidth() {
     return width;
 }
 
-int RenderedImg::GetHeight() {
+int Image::GetHeight() {
     return height;
 }
 
-void RenderedImg::DrawPixel(vector2i point, RGBA rgba) {
+void Image::DrawPixel(vector2i point, RGBA rgba) {
     int cols = point.u;
     int rows = point.v;
     if (0 <= cols && cols < width && 0 <= rows && rows < height) {
@@ -57,11 +64,22 @@ void RenderedImg::DrawPixel(vector2i point, RGBA rgba) {
     }
 }
 
-void RenderedImg::SaveImg(string filename) {
+void Image::SavePngImg(string filename) {
     stbi_write_png(filename.c_str(), width, height, mode, pixels, 0);
 }
 
-void RenderedImg::FillColor(RGBA rgba) {
+void Image::SavePpmImg(string filename) {
+    FILE* fp;
+    fp = fopen((const char*)filename.c_str(), "w");
+    fprintf(fp, "P3\n");
+    fprintf(fp, "%d %d\n", width, height);
+    fprintf(fp, "255\n");
+    for (int i = 0; i < width * height; i++)
+        fprintf(fp, "%d %d %d\n", pixels[i * 3 + 0], pixels[i * 3 + 1], pixels[i * 3 + 2]);
+    fclose(fp);
+}
+
+void Image::FillColor(RGBA rgba) {
     for (int i = 0; i < width * height; i++) {
         pixels[i * mode + 0] = rgba.r;
         pixels[i * mode + 1] = rgba.g;
@@ -71,7 +89,7 @@ void RenderedImg::FillColor(RGBA rgba) {
     }
 }
 
-void RenderedImg::DrawLine(vector2i point1, vector2i point2, RGBA rgba) {
+void Image::DrawLine(vector2i point1, vector2i point2, RGBA rgba) {
     int frac;
     int uNext, vNext, uStep, vStep, uDelta, vDelta;
     int uself, vself, uEnd, vEnd;

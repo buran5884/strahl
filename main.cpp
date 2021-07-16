@@ -2,6 +2,7 @@
 #include "img_handler.hpp"
 #include "iostream"
 #include "strahl.hpp"
+#include <chrono>
 
 using namespace std;
 
@@ -11,15 +12,23 @@ using namespace std;
 
 int main() {
     Object3D monkey("monkey.obj");
-    monkey.SetRotation(vector3d(0, 45, 0));
-    monkey.SetPosition(vector3d(0.0, 0.0, -4.0));
-    RenderedImg img(WIDTH, HEIGHT, MODE_RGB);
-    Scene scene;
-    CameraOrtho camera;
+    Object3D cube("cube.obj");
 
-    img.FillColor(RGBA(WHITE));
-    scene.DrawModelPers(img, monkey, WIREFRAME, RGBA(BLACK));
-    img.SaveImg("result.png");
+    Scene scene;
+    scene.AddObject(monkey);
+    scene.AddObject(cube);
+    scene.SetObjectPosition(0, vector3d(1.6, 0, -6.0));
+    scene.SetObjectPosition(1, vector3d(-1.6, 0, -6.0));
+
+    CameraPers cam(60.0, WIDTH, HEIGHT);
+    Image img(WIDTH, HEIGHT, MODE_RGB);
+
+    // std::chrono::system_clock::time_point start, end;
+    // start = std::chrono::system_clock::now();
+    cam.Render(scene, MODE_RGB, "result.ppm");
+    // end = std::chrono::system_clock::now();
+    // double elapsed = std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count();
+    // cout << elapsed << "[ms]" << endl;
 
     return 0;
 }
