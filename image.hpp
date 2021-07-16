@@ -1,14 +1,5 @@
 #pragma once
-
-#include <new>
-#include <string>
-#include <vector>
-
-#include "object_3d.hpp"
 #include "utilities.hpp"
-
-#define MODE_RGB 3
-#define MODE_RGBA 4
 
 using namespace std;
 
@@ -17,22 +8,20 @@ private:
     uint8_t* pixels;
     int width;
     int height;
-    int mode;
 
 public:
-    Image(int _width, int _height, int _mode) {
+    Image(int _width, int _height) {
         width = _width;
         height = _height;
-        mode = _mode;
-        pixels = new uint8_t[width * height * mode];
+        pixels = new uint8_t[width * height * 3];
     }
 
     void SetResolution(int _width, int _height);
-    void DrawPixel(vector2i point, RGBA rgba);
-    void DrawLine(vector2i point1, vector2i point2, RGBA rgba);
+    void DrawPixel(vector2i point, RGB rgba);
+    void DrawLine(vector2i point1, vector2i point2, RGB rgba);
     void SavePngImg(string filename);
     void SavePpmImg(string filename);
-    void FillColor(RGBA rgba);
+    void FillColor(RGB rgba);
     int GetWidth();
     int GetHeight();
 };
@@ -50,15 +39,13 @@ int Image::GetHeight() {
     return height;
 }
 
-void Image::DrawPixel(vector2i point, RGBA rgba) {
+void Image::DrawPixel(vector2i point, RGB rgba) {
     int cols = point.u;
     int rows = point.v;
     if (0 <= cols && cols < width && 0 <= rows && rows < height) {
-        pixels[((cols + rows * width) * mode) + 0] = rgba.r;
-        pixels[((cols + rows * width) * mode) + 1] = rgba.g;
-        pixels[((cols + rows * width) * mode) + 2] = rgba.b;
-        if (mode == MODE_RGBA)
-            pixels[((cols + rows * width) * mode) + 3] = rgba.a;
+        pixels[((cols + rows * width) * 3) + 0] = rgba.r;
+        pixels[((cols + rows * width) * 3) + 1] = rgba.g;
+        pixels[((cols + rows * width) * 3) + 2] = rgba.b;
     }
 }
 
@@ -73,17 +60,15 @@ void Image::SavePpmImg(string filename) {
     fclose(fp);
 }
 
-void Image::FillColor(RGBA rgba) {
+void Image::FillColor(RGB rgba) {
     for (int i = 0; i < width * height; i++) {
-        pixels[i * mode + 0] = rgba.r;
-        pixels[i * mode + 1] = rgba.g;
-        pixels[i * mode + 2] = rgba.b;
-        if (mode == MODE_RGBA)
-            pixels[i * mode + 3] = rgba.a;
+        pixels[i * 3 + 0] = rgba.r;
+        pixels[i * 3 + 1] = rgba.g;
+        pixels[i * 3 + 2] = rgba.b;
     }
 }
 
-void Image::DrawLine(vector2i point1, vector2i point2, RGBA rgba) {
+void Image::DrawLine(vector2i point1, vector2i point2, RGB rgba) {
     int frac;
     int uNext, vNext, uStep, vStep, uDelta, vDelta;
     int uself, vself, uEnd, vEnd;

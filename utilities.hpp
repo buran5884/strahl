@@ -1,5 +1,11 @@
 #pragma once
 
+#include <string>
+#include <vector>
+#include <new>
+#include <cmath>
+#include <iostream>
+
 #define BLACK 100
 #define WHITE 101
 #define RED 102
@@ -10,25 +16,17 @@
 #define Y_AXIS 1
 #define Z_AXIS 2
 
-struct RGBA {
+struct RGB {
     int r;
     int g;
     int b;
-    int a;
-    RGBA() { }
-    RGBA(int _r, int _g, int _b) {
+    RGB() { }
+    RGB(int _r, int _g, int _b) {
         r = _r;
         g = _g;
         b = _b;
-        a = 255;
     }
-    RGBA(int _r, int _g, int _b, int _a) {
-        r = _r;
-        g = _g;
-        b = _b;
-        a = _a;
-    }
-    RGBA(int color) {
+    RGB(int color) {
         switch (color) {
         case BLACK:
             r = 0, g = 0, b = 0;
@@ -48,29 +46,6 @@ struct RGBA {
         default:
             break;
         }
-        a = 255;
-    }
-    RGBA(int color, int _a) {
-        switch (color) {
-        case BLACK:
-            r = 0, g = 0, b = 0;
-            break;
-        case WHITE:
-            r = 255, g = 255, b = 255;
-            break;
-        case RED:
-            r = 255, g = 0, b = 0;
-            break;
-        case GREEN:
-            r = 0, g = 255, b = 0;
-            break;
-        case BLUE:
-            r = 0, g = 0, b = 255;
-            break;
-        default:
-            break;
-        }
-        a = _a;
     }
 };
 
@@ -100,6 +75,12 @@ struct vector4d {
         z = _z;
         w = _w;
     }
+    vector4d(vector3d _vector3d) {
+        x = _vector3d.x;
+        y = _vector3d.y;
+        z = _vector3d.z;
+        w = 1.0;
+    }
 };
 
 struct vector2d {
@@ -125,11 +106,39 @@ struct vector2i {
 };
 
 struct edge {
-    uint v1;
-    uint v2;
+    uint v[2];
+    edge(uint v1, uint v2) {
+        if (v1 < v2) {
+            v[0] = v1;
+            v[1] = v2;
+        } else {
+            v[0] = v2;
+            v[1] = v1;
+        }
+    }
+    edge() { }
+    void setEdge(uint v1, uint v2) {
+        if (v1 < v2) {
+            v[0] = v1;
+            v[1] = v2;
+        } else {
+            v[0] = v2;
+            v[1] = v1;
+        }
+    }
+    void print() {
+        printf("%d %d\n", v[0], v[1]);
+    }
+    bool operator==(const edge& e) const {
+        return (v[0] == e.v[0] && v[1] == e.v[1]);
+    }
+};
 
-    edge(uint _v1, uint _v2) {
-        v1 = _v1;
-        v2 = _v2;
+struct face {
+    edge edges[3];
+    face(edge e1, edge e2, edge e3) {
+        edges[0] = e1;
+        edges[1] = e2;
+        edges[3] = e3;
     }
 };

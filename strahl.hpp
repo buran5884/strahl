@@ -1,9 +1,8 @@
 #pragma once
 
-#include "object_3d.hpp"
 #include "image.hpp"
+#include "object_3d.hpp"
 #include "utilities.hpp"
-#include <vector>
 
 #define CAMERA_PERS 0
 #define CAMERA_ORTHO 1
@@ -19,54 +18,54 @@ class CameraPers;
 
 class Scene {
 private:
-    RGBA backgroundColor;
+    RGB backgroundColor;
     vector<Object3D> objects;
 
 public:
-    Scene(RGBA rgba) {
+    Scene(RGB rgba) {
         backgroundColor = rgba;
     }
     Scene() {
-        backgroundColor = RGBA(255, 255, 255);
+        backgroundColor = RGB(255, 255, 255);
     }
-    void DrawModel(Image& img, Object3D& model, int mode, RGBA rgba);
-    void DrawModelPers(Image& img, RGBA rgba);
+    void DrawModel(Image& img, Object3D& model, int mode, RGB rgba);
+    void DrawModelPers(Image& img, RGB rgba);
 
-    RGBA GetBackgroundColor();
+    RGB GetBackgroundColor();
     size_t GetObjectsSize();
     Object3D GetObject(int n);
 
-    void AddObject(Object3D object);
-    void SetObjectPosition(uint id, vector3d location);
-    void SetObjectRotation(uint id, vector3d rotation);
-    void SetObjectScale(uint id, vector3d scale);
+    void AddObject(Object3D object, string name);
+    void SetObjectLocation(string name, vector3d location);
+    void SetObjectRotation(string name, vector3d rotation);
+    void SetObjectScale(string name, vector3d scale);
 };
 
-void Scene::AddObject(Object3D object) {
+void Scene::AddObject(Object3D object, string name) {
     int id = objects.size();
     objects.push_back(object);
-    objects.back().SetID(id);
+    objects.back().SetObjectName(name);
 }
 
-void Scene::SetObjectPosition(uint id, vector3d location) {
+void Scene::SetObjectLocation(string name, vector3d location) {
     for (int i = 0; i < objects.size(); i++) {
-        if (objects[i].GetID() == id) {
-            objects[i].SetPosition(location);
+        if (objects[i].GetObjectName() == name) {
+            objects[i].SetLocation(location);
         }
     }
 }
 
-void Scene::SetObjectRotation(uint id, vector3d rotation) {
+void Scene::SetObjectRotation(string name, vector3d rotation) {
     for (int i = 0; i < objects.size(); i++) {
-        if (objects[i].GetID() == id) {
+        if (objects[i].GetObjectName() == name) {
             objects[i].SetRotation(rotation);
         }
     }
 }
 
-void Scene::SetObjectScale(uint id, vector3d scale) {
+void Scene::SetObjectScale(string name, vector3d scale) {
     for (int i = 0; i < objects.size(); i++) {
-        if (objects[i].GetID() == id) {
+        if (objects[i].GetObjectName() == name) {
             objects[i].SetScale(scale);
         }
     }
@@ -80,48 +79,7 @@ Object3D Scene::GetObject(int n) {
     return objects[n];
 }
 
-void Scene::DrawModel(Image& img, Object3D& model, int mode, RGBA rgba) {
-    vector2d scale(img.GetWidth() / 6.4, img.GetHeight() / 3.6);
-    for (int i = 0; i < model.GetFaceSize(); i++) {
-        vector3d vertices[3];
-        vector2i screenPoints[3];
-        for (int j = 0; j < 3; j++) {
-            vertices[j] = model.GetFaceVertex(i, j);
-            screenPoints[j] = vector2i(scale.x * (vertices[j].x + 3.2), scale.y * (-vertices[j].y + 1.8));
-        }
-        img.DrawLine(screenPoints[0], screenPoints[1], rgba);
-        img.DrawLine(screenPoints[1], screenPoints[2], rgba);
-        img.DrawLine(screenPoints[2], screenPoints[0], rgba);
-    }
-}
-
-void Scene::DrawModelPers(Image& img, RGBA rgba) {
-    int width = (double)img.GetWidth();
-    int height = (double)img.GetHeight();
-
-    Object3D model = objects[0];
-    double fovx = 60.0;
-    double aspect = (double)width / (double)height;
-    double fovy = fovx / aspect;
-    double f = 1.0 / (tan((fovy * M_PI / 180.0) / 2.0));
-
-    double x, y;
-    for (int i = 0; i < model.GetFaceSize(); i++) {
-        vector3d vertices[3];
-        vector2i screenPoints[3];
-        for (int j = 0; j < 3; j++) {
-            vertices[j] = model.GetFaceVertex(i, j);
-            x = (vertices[j].x * f) / (aspect * -vertices[j].z);
-            y = (vertices[j].y * f) / -vertices[j].z;
-            screenPoints[j] = vector2i(x * width / 2.0 + width / 2.0, -y * height / 2.0 + height / 2.0);
-        }
-        img.DrawLine(screenPoints[0], screenPoints[1], rgba);
-        img.DrawLine(screenPoints[1], screenPoints[2], rgba);
-        img.DrawLine(screenPoints[2], screenPoints[0], rgba);
-    }
-}
-
-RGBA Scene::GetBackgroundColor() {
+RGB Scene::GetBackgroundColor() {
     return backgroundColor;
 }
 
@@ -138,7 +96,7 @@ private:
     vector3d location;
     vector3d rotation;
 
-    void DrawObject(Image& img, Object3D& object, RGBA rgba);
+    void DrawObject(Image& img, Object3D& object, RGB rgba);
 
 public:
     CameraPers(double _fovX, int _width, int _height) {
@@ -152,9 +110,9 @@ public:
     }
     void SetFovX(double _fovX);
     void SetFovY(double _fovY);
-    void SetPosition(vector3d _position);
+    void SetLocation(vector3d _location);
     void SetRotation(vector3d _rotation);
-    void Render(Scene scene, int mode, string filename);
+    void Render(Scene scene, string filename);
 };
 
 void CameraPers::SetFovX(double _fovX) {
@@ -167,41 +125,39 @@ void CameraPers::SetFovY(double _fovY) {
     fovX = fovY * aspect;
 }
 
-void CameraPers::SetPosition(vector3d _position) {
-    location = _position;
+void CameraPers::SetLocation(vector3d _location) {
+    location = _location;
 }
 
 void CameraPers::SetRotation(vector3d _rotation) {
     rotation = _rotation;
 }
 
-void CameraPers::DrawObject(Image& image, Object3D& object, RGBA rgba) {
+void CameraPers::DrawObject(Image& image, Object3D& object, RGB rgba) {
     int width = (double)image.GetWidth();
     int height = (double)image.GetHeight();
     double f = 1.0 / (tan((fovX * M_PI / 180.0) / 2.0));
     double x, y;
-    double a = 1.0 / aspect;
-    for (int i = 0; i < object.GetFaceSize(); i++) {
-        vector3d vertices[3];
-        vector2i screenPoints[3];
-        for (int j = 0; j < 3; j++) {
-            vertices[j] = object.GetFaceVertex(i, j);
-            x = (vertices[j].x * f) / -vertices[j].z;
-            y = (vertices[j].y * f) / (a * -vertices[j].z);
-            screenPoints[j] = vector2i(x * width / 2.0 + width / 2.0, -y * height / 2.0 + height / 2.0);
+
+    for (int i = 0; i < object.GetEdgeSize(); i++) {
+        vector3d vertices[2];
+        vector2i p[2];
+        for (int j = 0; j < 2; j++) {
+            vertices[j] = object.GetVertex(object.GetEdge(i).v[j]);
+            x = vertices[j].x * f / -vertices[j].z;
+            y = vertices[j].y * f * aspect / -vertices[j].z;
+            p[j] = vector2i(x * width / 2.0 + width / 2.0, -y * height / 2.0 + height / 2.0);
         }
-        image.DrawLine(screenPoints[0], screenPoints[1], rgba);
-        image.DrawLine(screenPoints[1], screenPoints[2], rgba);
-        image.DrawLine(screenPoints[2], screenPoints[0], rgba);
+        image.DrawLine(p[0], p[1], rgba);
     }
 }
 
-void CameraPers::Render(Scene scene, int mode, string filename) {
-    Image img(width, height, mode);
+void CameraPers::Render(Scene scene, string filename) {
+    Image img(width, height);
     img.FillColor(scene.GetBackgroundColor());
     for (int i = 0; i < scene.GetObjectsSize(); i++) {
         Object3D object = scene.GetObject(i);
-        DrawObject(img, object, RGBA(BLACK));
+        DrawObject(img, object, RGB(BLACK));
     }
     img.SavePpmImg(filename);
 }
@@ -216,6 +172,5 @@ private:
     double zFar;
 
 public:
-    void setParam(double _left, double _right, double _bottom, double _top, double _zNear, double _zFar);
     void Render(Scene scene, string filename);
 };

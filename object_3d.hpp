@@ -1,38 +1,31 @@
 #pragma once
-
 #include "utilities.hpp"
-#include <cmath>
-#include <iostream>
-#include <vector>
 
 using namespace std;
 
 class Object3D {
-    int id;
-
     vector3d location;
     vector3d rotation;
     vector3d scale;
+    string objectName;
 
     vector<vector3d> originalVertex;
     vector<vector3d> vertices;
     vector<vector3d> normals;
     vector<vector2d> textures;
     vector<int> faces;
-
     vector<edge> edges;
+    vector<face> faces_test;
 
-    int LoadOBJ(string filename);
     void SetVertex(size_t index, vector3d location);
 
 public:
-    Object3D(string filename) {
-        id = -1;
-        LoadOBJ(filename);
-    }
+    Object3D() { }
 
-    int GetID();
+    int ImportOBJ(string filename);
+
     vector3d GetVertex(size_t index);
+    edge GetEdge(size_t index);
     vector3d GetOriginalVertex(size_t index);
     vector3d GetNormal(size_t index);
 
@@ -40,24 +33,26 @@ public:
     vector3d GetFaceNormal(size_t index, int elem);
 
     size_t GetVertexSize(void);
+    size_t GetEdgeSize(void);
     size_t GetFaceSize(void);
+    string GetObjectName(void);
 
-    void SetID(int _id);
-    void SetPosition(vector3d _position);
+    void SetObjectName(string name);
+    void SetLocation(vector3d _location);
     void SetRotation(vector3d _rotation);
     void SetScale(vector3d _scale);
 };
 
-int Object3D::GetID() {
-    return id;
+string Object3D::GetObjectName(void) {
+    return objectName;
 }
 
-void Object3D::SetID(int _id){
-    id = _id;
+void Object3D::SetObjectName(string name) {
+    objectName = name;
 }
 
-void Object3D::SetPosition(vector3d _position) {
-    location = _position;
+void Object3D::SetLocation(vector3d _location) {
+    location = _location;
     for (int i = 0; i < GetVertexSize(); i++) {
         double x = GetVertex(i).x + location.x;
         double y = GetVertex(i).y + location.y;
@@ -134,19 +129,30 @@ size_t Object3D::GetVertexSize() {
     return vertices.size();
 }
 
+size_t Object3D::GetEdgeSize() {
+    return edges.size();
+}
+
+edge Object3D::GetEdge(size_t index) {
+    return edges[index];
+}
+
 size_t Object3D::GetFaceSize() {
     return faces.size() / 10;
 }
 
-int Object3D::LoadOBJ(string filename) {
+int Object3D::ImportOBJ(string filename) {
     FILE* fp;
     if ((fp = fopen((char*)filename.c_str(), "r")) == NULL) {
+        cout << filename << "does not exist." << endl;
         return 1;
     }
 
     vector3d v, n;
     vector2d t;
     int f[10] = {};
+    edge temp_edge[3];
+    size_t e1, e2, e3;
 
     int mtl_number = -1;
     char line[128], mtl[56];
@@ -191,6 +197,47 @@ int Object3D::LoadOBJ(string filename) {
                 // v
             }
             Object3D::faces.insert(faces.end(), f, f + 10);
+
+            temp_edge[0].setEdge(f[0] - 1, f[3] - 1);
+            temp_edge[1].setEdge(f[3] - 1, f[6] - 1);
+            temp_edge[2].setEdge(f[6] - 1, f[0] - 1);
+
+            if (edges.size() != 0) {
+                size_t size = edges.size();
+                e1 = -1;
+                e2 = -1;
+                e3 = -1;
+                for (size_t i = 0; i < size; i++) {
+                    if (temp_edge[0] == edges[i]) {
+                        e1 = i;
+                    }
+                    if (temp_edge[1] == edges[i]) {
+                        e2 = i;
+                    }
+                    if (temp_edge[2] == edges[i]) {
+                        e3 = i;
+                    }
+                }
+                if (e1 == -1) {
+                    edges.push_back(temp_edge[0]);
+                    e1 = edges.size() - 1;
+                }
+                if (e2 == -1) {
+                    edges.push_back(temp_edge[1]);
+                    e2 = edges.size() - 1;
+                }
+                if (e3 == -1) {
+                    edges.push_back(temp_edge[2]);
+                    e3 = edges.size() - 1;
+                }
+            } else {
+                for (int i = 0; i < 3; i++)
+                    edges.push_back(temp_edge[i]);
+                e1 = 0;
+                e2 = 1;
+                e3 = 2;
+            }
+            faces_test.push_back(face(edges[e1], edges[e2], edges[e3]));
             break;
 
         default:
