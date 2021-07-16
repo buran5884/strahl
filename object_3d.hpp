@@ -10,7 +10,7 @@ using namespace std;
 class Object3D {
     int id;
 
-    vector3d position;
+    vector3d location;
     vector3d rotation;
     vector3d scale;
 
@@ -21,7 +21,7 @@ class Object3D {
     vector<int> faces;
 
     int LoadOBJ(string filename);
-    void SetVertex(size_t index, vector3d position);
+    void SetVertex(size_t index, vector3d location);
 
 public:
     Object3D(string filename) {
@@ -55,11 +55,11 @@ void Object3D::SetID(int _id){
 }
 
 void Object3D::SetPosition(vector3d _position) {
-    position = _position;
+    location = _position;
     for (int i = 0; i < GetVertexSize(); i++) {
-        double x = GetVertex(i).x + position.x;
-        double y = GetVertex(i).y + position.y;
-        double z = GetVertex(i).z + position.z;
+        double x = GetVertex(i).x + location.x;
+        double y = GetVertex(i).y + location.y;
+        double z = GetVertex(i).z + location.z;
         SetVertex(i, vector3d(x, y, z));
     }
 }

@@ -125,10 +125,10 @@ struct vector2i {
 };
 
 struct edge {
-    vector3d v1;
-    vector3d v2;
+    uint v1;
+    uint v2;
 
-    edge(vector3d _v1, vector3d _v2) {
+    edge(uint _v1, uint _v2) {
         v1 = _v1;
         v2 = _v2;
     }

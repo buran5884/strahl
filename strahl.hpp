@@ -37,7 +37,7 @@ public:
     Object3D GetObject(int n);
 
     void AddObject(Object3D object);
-    void SetObjectPosition(uint id, vector3d position);
+    void SetObjectPosition(uint id, vector3d location);
     void SetObjectRotation(uint id, vector3d rotation);
     void SetObjectScale(uint id, vector3d scale);
 };
@@ -48,10 +48,10 @@ void Scene::AddObject(Object3D object) {
     objects.back().SetID(id);
 }
 
-void Scene::SetObjectPosition(uint id, vector3d position) {
+void Scene::SetObjectPosition(uint id, vector3d location) {
     for (int i = 0; i < objects.size(); i++) {
         if (objects[i].GetID() == id) {
-            objects[i].SetPosition(position);
+            objects[i].SetPosition(location);
         }
     }
 }
@@ -135,7 +135,7 @@ private:
     double zNear;
     double zFar;
 
-    vector3d position;
+    vector3d location;
     vector3d rotation;
 
     void DrawObject(Image& img, Object3D& object, RGBA rgba);
@@ -147,7 +147,7 @@ public:
         aspect = (double)width / (double)height;
         fovX = _fovX;
         fovY = fovX / aspect;
-        position = vector3d(0.0, 0.0, 0.0);
+        location = vector3d(0.0, 0.0, 0.0);
         rotation = vector3d(0.0, 0.0, 0.0);
     }
     void SetFovX(double _fovX);
@@ -168,7 +168,7 @@ void CameraPers::SetFovY(double _fovY) {
 }
 
 void CameraPers::SetPosition(vector3d _position) {
-    position = _position;
+    location = _position;
 }
 
 void CameraPers::SetRotation(vector3d _rotation) {
