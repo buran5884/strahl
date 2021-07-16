@@ -1,8 +1,8 @@
 #pragma once
 
-#include "Object.hpp"
-#include "img_handler.hpp"
-#include "Utilities.hpp"
+#include "object_3d.hpp"
+#include "image.hpp"
+#include "utilities.hpp"
 #include <vector>
 
 #define CAMERA_PERS 0
@@ -14,7 +14,6 @@
 using namespace std;
 
 class Scene;
-class Camera;
 class CameraOrtho;
 class CameraPers;
 
@@ -204,7 +203,6 @@ void CameraPers::Render(Scene scene, int mode, string filename) {
         Object3D object = scene.GetObject(i);
         DrawObject(img, object, RGBA(BLACK));
     }
-    // image.SavePngImg(filename);
     img.SavePpmImg(filename);
 }
 

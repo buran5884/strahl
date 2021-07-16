@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Utilities.hpp"
+#include "utilities.hpp"
 #include <cmath>
 #include <iostream>
 #include <vector>

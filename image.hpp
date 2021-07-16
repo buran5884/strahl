@@ -4,9 +4,8 @@
 #include <string>
 #include <vector>
 
-#include "Object.hpp"
-#include "stb_image_write.h"
-#include "Utilities.hpp"
+#include "object_3d.hpp"
+#include "utilities.hpp"
 
 #define MODE_RGB 3
 #define MODE_RGBA 4
@@ -30,11 +29,10 @@ public:
 
     void SetResolution(int _width, int _height);
     void DrawPixel(vector2i point, RGBA rgba);
+    void DrawLine(vector2i point1, vector2i point2, RGBA rgba);
     void SavePngImg(string filename);
     void SavePpmImg(string filename);
     void FillColor(RGBA rgba);
-    void DrawLine(vector2i point1, vector2i point2, RGBA rgba);
-    void DrawWireframe(Object3D model, RGBA rgba);
     int GetWidth();
     int GetHeight();
 };
@@ -62,10 +60,6 @@ void Image::DrawPixel(vector2i point, RGBA rgba) {
         if (mode == MODE_RGBA)
             pixels[((cols + rows * width) * mode) + 3] = rgba.a;
     }
-}
-
-void Image::SavePngImg(string filename) {
-    stbi_write_png(filename.c_str(), width, height, mode, pixels, 0);
 }
 
 void Image::SavePpmImg(string filename) {

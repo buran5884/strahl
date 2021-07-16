@@ -1,20 +1,19 @@
 #define STB_IMAGE_WRITE_IMPLEMENTATION
-#include "img_handler.hpp"
+#include "image.hpp"
 #include "iostream"
-#include "Strahl.hpp"
+#include "strahl.hpp"
 #include <chrono>
 
 using namespace std;
 
-#define HEIGHT 720
-#define WIDTH 1280
-#define CHANNEL_NUM 3
+#define WIDTH 1600
+#define HEIGHT 1200
 
 int main() {
-    Object3D monkey("monkey.obj");
-    Object3D cube("cube.obj");
+    Object3D monkey("3dObjects/monkey.obj");
+    Object3D cube("3dObjects/cube.obj");
 
-    Scene scene;
+    Scene scene(RGBA(122, 122, 122));
     scene.AddObject(monkey);
     scene.AddObject(cube);
     scene.SetObjectPosition(0, vector3d(1.6, 0, -6.0));

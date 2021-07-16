@@ -123,3 +123,13 @@ struct vector2i {
         v = _v;
     }
 };
+
+struct edge {
+    vector3d v1;
+    vector3d v2;
+
+    edge(vector3d _v1, vector3d _v2) {
+        v1 = _v1;
+        v2 = _v2;
+    }
+};
