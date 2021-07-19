@@ -104,25 +104,28 @@ public:
         height = _height;
         aspect = (double)width / (double)height;
         fovX = _fovX;
-        fovY = fovX / aspect;
+        fovY = 2.0 * atan(tan(fovX * M_PI / 360.0) / aspect) * 180.0 / M_PI;
         location = vector3d(0.0, 0.0, 0.0);
         rotation = vector3d(0.0, 0.0, 0.0);
+        zNear = 2.0;
+        zFar = 4.0;
     }
     void SetFovX(double _fovX);
     void SetFovY(double _fovY);
     void SetLocation(vector3d _location);
     void SetRotation(vector3d _rotation);
     void Render(Scene scene, string filename);
+    void GetZBuffer(Scene scene, string filename);
 };
 
 void CameraPers::SetFovX(double _fovX) {
     fovX = _fovX;
-    fovY = fovX / aspect;
+    fovY = 2.0 * atan(tan(fovX * M_PI / 360.0) / aspect) * 180.0 / M_PI;
 }
 
 void CameraPers::SetFovY(double _fovY) {
     fovY = _fovY;
-    fovX = fovY * aspect;
+    fovY = 2.0 * atan(tan(fovY * M_PI / 360.0) * aspect) * 180.0 / M_PI;
 }
 
 void CameraPers::SetLocation(vector3d _location) {
@@ -158,6 +161,44 @@ void CameraPers::Render(Scene scene, string filename) {
     for (int i = 0; i < scene.GetObjectsSize(); i++) {
         Object3D object = scene.GetObject(i);
         DrawObject(img, object, RGB(BLACK));
+    }
+    img.SavePpmImg(filename);
+}
+
+void CameraPers::GetZBuffer(Scene scene, string filename) {
+    Image img(width, height);
+    img.FillColor(RGB(255, 255, 255));
+    vector3d origin = vector3d(0, 0, 0);
+    vector3d screenPoint;
+
+    vector3d ray;
+    double wc = zNear * tan(fovX * M_PI / 360.0);
+    double hc = zNear * tan(fovY * M_PI / 360.0);
+    screenPoint.z = -zNear;
+
+    for (int cols = 0; cols < width; cols++) {
+        for (int rows = 0; rows < height; rows++) {
+            screenPoint.x = wc * ((2 * (double)cols / width) - 1.0);
+            screenPoint.y = -hc * ((2 * (double)rows / height) - 1.0);
+            ray = screenPoint - origin;
+
+            for (int m = 0; m < scene.GetObjectsSize(); m++) {
+                Object3D object = scene.GetObject(m);
+                for (int k = 0; k < object.GetFaceSize(); k++) {
+                    vector3d v[3];
+                    for (int l = 0; l < 3; l++)
+                        v[l] = object.GetFaceVertex(k, l);
+                    vector3d point = hitTriangle(origin, ray, v[0], v[1], v[2]);
+                    if (!(point == origin)) {
+                        double z = vector3d(point - origin).length();
+                        double _z = (zFar + zNear) / (zFar - zNear) + (-2.0 * zFar * zNear) / (z * (zFar - zNear));
+                        int color = 255.0 * (_z + 1.0) / 2.0;
+                        if (color < img.GetPixel(cols, rows).r)
+                            img.SetPixel(vector2i(cols, rows), RGB(color, color, color));
+                    }
+                }
+            }
+        }
     }
     img.SavePpmImg(filename);
 }

@@ -1,10 +1,12 @@
 #pragma once
 
-#include <string>
-#include <vector>
-#include <new>
 #include <cmath>
 #include <iostream>
+#include <new>
+#include <string>
+#include <vector>
+
+#define ZERO 1e-10
 
 #define BLACK 100
 #define WHITE 101
@@ -59,6 +61,43 @@ struct vector3d {
         x = _x;
         y = _y;
         z = _z;
+    }
+
+    double length() {
+        return sqrt(x * x + y * y + z * z);
+    }
+
+    void print() {
+        printf("%lf %lf %lf\n", x, y, z);
+    }
+    vector3d operator+(vector3d rhs) {
+        vector3d add;
+        add.x = x + rhs.x;
+        add.y = y + rhs.y;
+        add.z = z + rhs.z;
+        return add;
+    }
+    vector3d operator-(vector3d rhs) {
+        vector3d dif;
+        dif.x = x - rhs.x;
+        dif.y = y - rhs.y;
+        dif.z = z - rhs.z;
+        return dif;
+    }
+    vector3d operator-() {
+        return vector3d(-x, -y, -z);
+    }
+    vector3d operator*(double a) {
+        return vector3d(a * x, a * y, a * z);
+    }
+    vector3d operator=(vector3d rhs) {
+        x = rhs.x;
+        y = rhs.y;
+        z = rhs.z;
+        return vector3d(x, y, z);
+    }
+    bool operator==(vector3d rhs) {
+        return (x == rhs.x && y == rhs.y && z == rhs.z);
     }
 };
 
@@ -135,10 +174,36 @@ struct edge {
 };
 
 struct face {
+    size_t vertices[3];
     edge edges[3];
-    face(edge e1, edge e2, edge e3) {
+    face(size_t v1, size_t v2, size_t v3, edge e1, edge e2, edge e3) {
+        vertices[0] = v1;
+        vertices[1] = v2;
+        vertices[2] = v3;
         edges[0] = e1;
         edges[1] = e2;
         edges[3] = e3;
     }
 };
+
+double det(vector3d a, vector3d b, vector3d c) {
+    return a.x * b.y * c.z + a.z * b.x * c.y + a.y * b.z * c.x - a.z * b.y * c.x - a.y * b.x * c.z - a.x * b.z * c.y;
+}
+
+vector3d hitTriangle(vector3d origin, vector3d ray, vector3d v1, vector3d v2, vector3d v3) {
+    vector3d e1 = v2 - v1;
+    vector3d e2 = v3 - v1;
+    double denominator = det(e1, e2, -ray);
+
+    if (denominator != 0.0) {
+        double u = det(origin - v1, e2, -ray) / denominator;
+        if (u >= 0.0 && u <= 1.0) {
+            double v = det(e1, origin - v1, -ray) / denominator;
+            if (v >= 0.0 && (u + v) <= 1.0) {
+                double t = det(e1, e2, origin - v1) / denominator;
+                return origin + ray * t;
+            }
+        }
+    }
+    return origin;
+}

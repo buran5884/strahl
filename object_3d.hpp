@@ -118,7 +118,8 @@ vector3d Object3D::GetNormal(size_t index) {
 }
 
 vector3d Object3D::GetFaceVertex(size_t index, int elem) {
-    return vertices[faces[index * 10 + elem * 3] - 1];
+    // return vertices[faces[index * 10 + elem * 3] - 1];
+    return vertices[faces_test[index].vertices[elem]];
 }
 
 vector3d Object3D::GetFaceNormal(size_t index, int elem) {
@@ -237,7 +238,7 @@ int Object3D::ImportOBJ(string filename) {
                 e2 = 1;
                 e3 = 2;
             }
-            faces_test.push_back(face(edges[e1], edges[e2], edges[e3]));
+            faces_test.push_back(face(f[0] - 1, f[3] - 1, f[6] - 1, edges[e1], edges[e2], edges[e3]));
             break;
 
         default:

@@ -17,14 +17,22 @@ public:
     }
 
     void SetResolution(int _width, int _height);
-    void DrawPixel(vector2i point, RGB rgba);
+    void SetPixel(vector2i point, RGB rgba);
     void DrawLine(vector2i point1, vector2i point2, RGB rgba);
     void SavePngImg(string filename);
     void SavePpmImg(string filename);
     void FillColor(RGB rgba);
     int GetWidth();
     int GetHeight();
+    RGB GetPixel(int width, int height);
 };
+
+RGB Image::GetPixel(int cols, int rows) {
+    int r = pixels[((cols + rows * width) * 3) + 0];
+    int g = pixels[((cols + rows * width) * 3) + 1];
+    int b = pixels[((cols + rows * width) * 3) + 2];
+    return RGB(r,g,b);
+}
 
 void Image::SetResolution(int _width, int _height) {
     width = _width;
@@ -39,7 +47,7 @@ int Image::GetHeight() {
     return height;
 }
 
-void Image::DrawPixel(vector2i point, RGB rgba) {
+void Image::SetPixel(vector2i point, RGB rgba) {
     int cols = point.u;
     int rows = point.v;
     if (0 <= cols && cols < width && 0 <= rows && rows < height) {
@@ -92,7 +100,7 @@ void Image::DrawLine(vector2i point1, vector2i point2, RGB rgba) {
         uDelta = -uDelta;
     if (vDelta < 0)
         vDelta = -vDelta;
-    DrawPixel(vector2i(uNext, vNext), rgba);
+    SetPixel(vector2i(uNext, vNext), rgba);
     if (uDelta > vDelta) {
         frac = vDelta * 2 - uDelta;
         while (uNext != uEnd) {
@@ -102,7 +110,7 @@ void Image::DrawLine(vector2i point1, vector2i point2, RGB rgba) {
             }
             uNext = uNext + uStep;
             frac = frac + vDelta;
-            DrawPixel(vector2i(uNext, vNext), rgba);
+            SetPixel(vector2i(uNext, vNext), rgba);
         }
     } else {
         frac = uDelta * 2 - vDelta;
@@ -113,7 +121,7 @@ void Image::DrawLine(vector2i point1, vector2i point2, RGB rgba) {
             }
             vNext = vNext + vStep;
             frac = frac + uDelta;
-            DrawPixel(vector2i(uNext, vNext), rgba);
+            SetPixel(vector2i(uNext, vNext), rgba);
         }
     }
 }

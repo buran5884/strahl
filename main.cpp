@@ -3,8 +3,8 @@
 
 using namespace std;
 
-#define WIDTH 1600
-#define HEIGHT 1200
+#define WIDTH 640
+#define HEIGHT 480
 
 int main() {
     Object3D monkey;
@@ -12,10 +12,12 @@ int main() {
 
     Scene scene;
     scene.AddObject(monkey, "monkey01");
-    scene.SetObjectLocation("monkey01", vector3d(0, 0, -6.0));
+    scene.SetObjectRotation("monkey01", vector3d(0, 0, 90));
+    scene.SetObjectLocation("monkey01", vector3d(0, 0, -3.0));
 
     CameraPers cam(60.0, WIDTH, HEIGHT);
     cam.Render(scene, "result.ppm");
+    cam.GetZBuffer(scene, "zbuffer.ppm");
 
     return 0;
 }
