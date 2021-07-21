@@ -22,7 +22,11 @@ struct RGB {
     int r;
     int g;
     int b;
-    RGB() { }
+    RGB() {
+        r = 0;
+        g = 0;
+        b = 0;
+    }
     RGB(int _r, int _g, int _b) {
         r = _r;
         g = _g;
@@ -48,6 +52,11 @@ struct RGB {
         default:
             break;
         }
+    }
+    void SetColor(int _r, int _g, int _b) {
+        r = _r;
+        g = _g;
+        b = _b;
     }
 };
 
