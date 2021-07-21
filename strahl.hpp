@@ -4,12 +4,6 @@
 #include "object_3d.hpp"
 #include "utilities.hpp"
 
-#define CAMERA_PERS 0
-#define CAMERA_ORTHO 1
-
-#define WIREFRAME 0
-#define SOLID 1
-
 using namespace std;
 
 class Scene;
@@ -231,20 +225,22 @@ public:
         rotation = vector3d(0.0, 0.0, 0.0);
         zNear = 2.0;
         zFar = 4.0;
+        if (width / (right - left) != height / (top - bottom))
+            cout << "aspect of resolution and ortho parameter are not equal." << endl;
     }
     void Render(Scene scene, string filename);
 };
 
 void CameraOrtho::DrawObject(Image& image, Object3D& object, RGB rgba) {
     for (int i = 0; i < object.GetEdgeSize(); i++) {
-        vector2d scale((width / 2) / top, (height / 2) / right);
+        vector2d scale(width / (right - left), height / (top - bottom));
         vector3d vertices[2];
         vector2i p[2];
         double x, y;
         for (int j = 0; j < 2; j++) {
             vertices[j] = object.GetVertex(object.GetEdge(i).v[j]);
-            x = vertices[j].x + 2.0;
-            y = -vertices[j].y + 1.5;
+            x = vertices[j].x - left;
+            y = -vertices[j].y + top;
             p[j] = vector2i(x * scale.x, y * scale.y);
         }
         image.DrawLine(p[0], p[1], rgba);
