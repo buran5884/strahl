@@ -1,4 +1,3 @@
-#define STB_IMAGE_WRITE_IMPLEMENTATION
 #include "strahl.hpp"
 
 using namespace std;
@@ -13,12 +12,12 @@ int main() {
     Scene scene;
     scene.AddObject(scene_obj, "scene");
 
+    CameraOrtho camOrtho(-2.0, 2.0, -1.5, 1.5, WIDTH, HEIGHT);
+    camOrtho.Render(scene, "ortho.ppm");
+
     CameraPers camPers(60.0, WIDTH, HEIGHT);
     camPers.Render(scene, "pers.ppm");
     // camPers.GetZBuffer(scene, "zbuffer.ppm");
-
-    CameraOrtho camOrtho(-2.0, 2.0, -1.5, 1.5, WIDTH, HEIGHT);
-    camOrtho.Render(scene, "ortho.ppm");
 
     return 0;
 }

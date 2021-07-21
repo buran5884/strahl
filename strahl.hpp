@@ -16,19 +16,20 @@ private:
     vector<Object3D> objects;
 
 public:
-    Scene(RGB rgba) {
-        backgroundColor = rgba;
+    Scene(RGB rgb) {
+        backgroundColor = rgb;
     }
     Scene() {
         backgroundColor = RGB(255, 255, 255);
     }
-    void DrawModel(Image& img, Object3D& model, int mode, RGB rgba);
-    void DrawModelPers(Image& img, RGB rgba);
+    void DrawModel(Image& img, Object3D& model, int mode, RGB rgb);
+    void DrawModelPers(Image& img, RGB rgb);
 
     RGB GetBackgroundColor();
     size_t GetObjectsSize();
     Object3D GetObject(int n);
 
+    void SetBackGroundColor(RGB rgb);
     void AddObject(Object3D object, string name);
     void SetObjectLocation(string name, vector3d location);
     void SetObjectRotation(string name, vector3d rotation);
@@ -39,6 +40,10 @@ void Scene::AddObject(Object3D object, string name) {
     int id = objects.size();
     objects.push_back(object);
     objects.back().SetObjectName(name);
+}
+
+void Scene::SetBackGroundColor(RGB rgb) {
+    backgroundColor = rgb;
 }
 
 void Scene::SetObjectLocation(string name, vector3d location) {
@@ -90,7 +95,7 @@ private:
     vector3d location;
     vector3d rotation;
 
-    void DrawObject(Image& img, Object3D& object, RGB rgba);
+    void DrawObject(Image& img, Object3D& object, RGB rgb);
 
 public:
     CameraPers(double _fovX, int _width, int _height) {
@@ -130,7 +135,7 @@ void CameraPers::SetRotation(vector3d _rotation) {
     rotation = _rotation;
 }
 
-void CameraPers::DrawObject(Image& image, Object3D& object, RGB rgba) {
+void CameraPers::DrawObject(Image& image, Object3D& object, RGB rgb) {
     int width = (double)image.GetWidth();
     int height = (double)image.GetHeight();
     double f = 1.0 / (tan((fovX * M_PI / 180.0) / 2.0));
@@ -145,7 +150,7 @@ void CameraPers::DrawObject(Image& image, Object3D& object, RGB rgba) {
             y = vertices[j].y * f * aspect / -vertices[j].z;
             p[j] = vector2i(x * width / 2.0 + width / 2.0, -y * height / 2.0 + height / 2.0);
         }
-        image.DrawLine(p[0], p[1], rgba);
+        image.DrawLine(p[0], p[1], rgb);
     }
 }
 
@@ -211,7 +216,7 @@ private:
     vector3d location;
     vector3d rotation;
 
-    void DrawObject(Image& img, Object3D& object, RGB rgba);
+    void DrawObject(Image& img, Object3D& object, RGB rgb);
 
 public:
     CameraOrtho(double _left, double _right, double _bottom, double _top, double _width, double _height) {
@@ -231,7 +236,7 @@ public:
     void Render(Scene scene, string filename);
 };
 
-void CameraOrtho::DrawObject(Image& image, Object3D& object, RGB rgba) {
+void CameraOrtho::DrawObject(Image& image, Object3D& object, RGB rgb) {
     for (int i = 0; i < object.GetEdgeSize(); i++) {
         vector2d scale(width / (right - left), height / (top - bottom));
         vector3d vertices[2];
@@ -243,7 +248,7 @@ void CameraOrtho::DrawObject(Image& image, Object3D& object, RGB rgba) {
             y = -vertices[j].y + top;
             p[j] = vector2i(x * scale.x, y * scale.y);
         }
-        image.DrawLine(p[0], p[1], rgba);
+        image.DrawLine(p[0], p[1], rgb);
     }
 }
 
