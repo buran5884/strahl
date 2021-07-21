@@ -205,6 +205,8 @@ void CameraPers::GetZBuffer(Scene scene, string filename) {
 
 class CameraOrtho {
 private:
+    double width;
+    double height;
     double left;
     double right;
     double bottom;
@@ -212,6 +214,49 @@ private:
     double zNear;
     double zFar;
 
+    vector3d location;
+    vector3d rotation;
+
+    void DrawObject(Image& img, Object3D& object, RGB rgba);
+
 public:
+    CameraOrtho(double _left, double _right, double _bottom, double _top, double _width, double _height) {
+        width = _width;
+        height = _height;
+        left = _left;
+        right = _right;
+        bottom = _bottom;
+        top = _top;
+        location = vector3d(0.0, 0.0, 0.0);
+        rotation = vector3d(0.0, 0.0, 0.0);
+        zNear = 2.0;
+        zFar = 4.0;
+    }
     void Render(Scene scene, string filename);
 };
+
+void CameraOrtho::DrawObject(Image& image, Object3D& object, RGB rgba) {
+    for (int i = 0; i < object.GetEdgeSize(); i++) {
+        vector2d scale((width / 2) / top, (height / 2) / right);
+        vector3d vertices[2];
+        vector2i p[2];
+        double x, y;
+        for (int j = 0; j < 2; j++) {
+            vertices[j] = object.GetVertex(object.GetEdge(i).v[j]);
+            x = vertices[j].x + 2.0;
+            y = -vertices[j].y + 1.5;
+            p[j] = vector2i(x * scale.x, y * scale.y);
+        }
+        image.DrawLine(p[0], p[1], rgba);
+    }
+}
+
+void CameraOrtho::Render(Scene scene, string filename) {
+    Image img(width, height);
+    img.FillColor(scene.GetBackgroundColor());
+    for (int i = 0; i < scene.GetObjectsSize(); i++) {
+        Object3D object = scene.GetObject(i);
+        DrawObject(img, object, RGB(BLACK));
+    }
+    img.SavePpmImg(filename);
+}

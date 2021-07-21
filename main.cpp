@@ -16,8 +16,10 @@ int main() {
     // scene.SetObjectLocation("monkey01", vector3d(0, 0, -3.0));
 
     CameraPers cam(60.0, WIDTH, HEIGHT);
+    CameraOrtho cam1(-1.5, 1.5, -2.0, 2.0, WIDTH, HEIGHT);
+    cam1.Render(scene, "result_ortho.ppm");
     cam.Render(scene, "result.ppm");
-    cam.GetZBuffer(scene, "zbuffer.ppm");
+    // cam.GetZBuffer(scene, "zbuffer.ppm");
 
     return 0;
 }
