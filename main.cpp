@@ -7,19 +7,17 @@ using namespace std;
 #define HEIGHT 480
 
 int main() {
-    Object3D monkey;
-    monkey.ImportOBJ("3dObjects/scene.obj");
+    Object3D scene_object;
+    scene_object.ImportOBJ("3dObjects/scene.obj");
 
     Scene scene;
-    scene.AddObject(monkey, "monkey01");
-    // scene.SetObjectRotation("monkey01", vector3d(0, 0, 90));
-    // scene.SetObjectLocation("monkey01", vector3d(0, 0, -3.0));
+    scene.AddObject(scene_object, "scene");
 
-    CameraPers cam(60.0, WIDTH, HEIGHT);
-    CameraOrtho cam1(-1.5, 1.5, -2.0, 2.0, WIDTH, HEIGHT);
-    cam1.Render(scene, "result_ortho.ppm");
-    cam.Render(scene, "result.ppm");
-    // cam.GetZBuffer(scene, "zbuffer.ppm");
+    CameraPers cam_pers(60.0, WIDTH, HEIGHT);
+    cam_pers.Render(scene, "result_pers.ppm");
+    
+    CameraOrtho cam_ortho(-1.5, 1.5, -2.0, 2.0, WIDTH, HEIGHT);
+    cam_ortho.Render(scene, "result_ortho.ppm");
 
     return 0;
 }
