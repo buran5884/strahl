@@ -14,11 +14,11 @@ int main() {
     scene.AddObject(scene_obj, "scene");
 
     CameraPers camPers(60.0, WIDTH, HEIGHT);
-    camPers.Render(scene, "result_pers.ppm");
+    camPers.Render(scene, "pers.ppm");
     // camPers.GetZBuffer(scene, "zbuffer.ppm");
 
     CameraOrtho camOrtho(-2.0, 2.0, -1.5, 1.5, WIDTH, HEIGHT);
-    camOrtho.Render(scene, "result_ortho.ppm");
+    camOrtho.Render(scene, "ortho.ppm");
 
     return 0;
 }

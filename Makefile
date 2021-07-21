@@ -1,2 +1,2 @@
 main:
-	g++ -o render_test main.cpp
+	g++ -o render main.cpp
